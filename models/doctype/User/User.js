@@ -15,6 +15,12 @@ module.exports = {
             "required": 1
         },
         {
+            "fieldname": "password",
+            "label": "Password",
+            "fieldtype": "Password",
+            "required": 1
+        },
+        {
             "fieldname": "full_name",
             "label": "Full Name",
             "fieldtype": "Data",
