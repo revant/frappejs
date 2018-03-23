@@ -93,15 +93,21 @@ module.exports = {
         });
 
         app.post('/login', function (req, res, next) {
-
-            // you might like to do a database look-up or something more scalable here
-            if (req.body.username && req.body.username === 'user' && req.body.password && req.body.password === 'pass') {
-                req.session.authenticated = true;
-                res.redirect('/');
-            } else {
+            // Do a database look-up TODO : Store passwords securely
+            let userFuture = frappe.getDoc("User", req.body.username);
+            userFuture.then(function(user){
+                if (req.body.username &&
+                    req.body.username === user.name &&
+                    req.body.password &&
+                    req.body.password === user.password) {
+                    req.session.authenticated = true;
+                    res.redirect('/');
+                } else {
+                    throw new PermissionDenied();
+                }
+            }).catch(function(){
                 res.redirect('/login');
-            }
-
+            });
         });
 
         app.get('/logout', function (req, res, next) {
