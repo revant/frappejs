@@ -2,9 +2,8 @@
 
 {% block content %}
 
-  <h1>Sign-in to this Express authentication example</h1>
-  <p>Use <i>user</i> for the username and <i>pass</i> for the password.</p>
-  <form method="post">
+  <h1>Login</h1>
+  <form method="post" action="/login">
       <p>
         <label for="username">Username</label>
         <input type="text" name="username">
@@ -13,7 +12,7 @@
         <label for="password">Password</label>
         <input type="password" name="password">
       </p>
-      <input type="submit">
+      <input type="submit" value="Login">
   </form>
 
 {% endblock %}

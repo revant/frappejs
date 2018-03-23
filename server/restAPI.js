@@ -11,7 +11,7 @@ module.exports = {
     },
 
     setup(app) {
-        this.setupLogin(app);
+        this.setupLoginRoutes(app);
         // get list
         app.get('/api/resource/:doctype', this.asyncHandler(async function(request, response) {
             for (let key of ['fields', 'filters']) {
@@ -85,7 +85,8 @@ module.exports = {
 
     },
 
-    setupLogin(app){
+    setupLoginRoutes(app){
+        // if not web app return
 
         app.get('/login', function (req, res, next) {
             res.render('login');
@@ -96,7 +97,7 @@ module.exports = {
             // you might like to do a database look-up or something more scalable here
             if (req.body.username && req.body.username === 'user' && req.body.password && req.body.password === 'pass') {
                 req.session.authenticated = true;
-                res.redirect('/secure');
+                res.redirect('/');
             } else {
                 res.redirect('/login');
             }
