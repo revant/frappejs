@@ -11,6 +11,7 @@ module.exports = {
     },
 
     setup(app) {
+        this.setupLogin(app);
         // get list
         app.get('/api/resource/:doctype', this.asyncHandler(async function(request, response) {
             for (let key of ['fields', 'filters']) {
@@ -82,5 +83,29 @@ module.exports = {
             return response.json({});
         }));
 
+    },
+
+    setupLogin(app){
+
+        app.get('/login', function (req, res, next) {
+            res.render('login');
+        });
+
+        app.post('/login', function (req, res, next) {
+
+            // you might like to do a database look-up or something more scalable here
+            if (req.body.username && req.body.username === 'user' && req.body.password && req.body.password === 'pass') {
+                req.session.authenticated = true;
+                res.redirect('/secure');
+            } else {
+                res.redirect('/login');
+            }
+
+        });
+
+        app.get('/logout', function (req, res, next) {
+            delete req.session.authenticated;
+            res.redirect('/');
+        });
     }
 };
