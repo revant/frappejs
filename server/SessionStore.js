@@ -13,12 +13,11 @@ module.exports = class SessionStore extends Store {
     }
     // Required : get(sid, callback), destroy(sid, callback), set(sid, session, callback)
     async get(sid, callback){
-        console.log("SessionStore#get", sid);
         let session = await frappe.db.get("Session", sid);
-        console.log(typeof session, "Session#session", session.session);
-        if(typeof session.session == String){
+        console.log(session);
+        if(typeof session.session === "string"){
             callback(null, JSON.parse(session.session));
-        } else if(typeof session.session == Object){
+        } else if(typeof session.session === "object"){
             callback(null, session.session);
         } else {
             callback(null, null);
@@ -26,30 +25,35 @@ module.exports = class SessionStore extends Store {
     }
 
     async destroy(sid, callback){
-        console.log("SessionStore#destroy", sid);
         this.deleteSession(sid);
         callback && defer(callback);
     }
 
     set(sid, session, callback){
-        console.log("SessionStore#set", sid);
-        this.clearAll();
+        // this.clearAll();
         const now = new Date()
         const expiration = new Date(now.setHours(now.getHours() + 1));
         session.cookie.expires = expiration;
         session.cookie.originalMaxAge = 1800;
-        frappe.db.insert("Session", {
+        frappe.db.update("Session", {
             name: sid,
             session: JSON.stringify(session)
+        }).then(()=>{
+            callback(new Error("Sid Set"));
+        }).catch(()=>{
+            frappe.db.insert("Session", {
+                name: sid,
+                session: JSON.stringify(session)
+            }).then(()=>{
+                callback(new Error("Sid Set"));
+            });
         });
-        callback && defer(callback);
     }
 
     // Recommended : touch(sid, session, callback)
     async touch(sid, session, callback){
-        console.log("SessionStore#touch", sid);
-        var currentSession = await this.getSession(sid);
-        console.log("currentSession", currentSession);
+        let sess = await frappe.getDoc('Session', sid);
+        let currentSession = JSON.parse(sess.session);
         if (currentSession) {
             // update expiration
             currentSession.cookie = session.cookie;
@@ -58,13 +62,11 @@ module.exports = class SessionStore extends Store {
                 session: JSON.stringify(currentSession)
             });
         }
-
         callback && defer(callback);
     }
 
     // Optional : all(callback), clear(callback), length(callback)
     all(callback){
-        console.log("SessionStore#all");
         const sessionIds = [];
         var sessionList = frappe.db.getAll('Session');
         var sessions = {};
@@ -84,13 +86,11 @@ module.exports = class SessionStore extends Store {
     }
 
     clear(callback){
-        console.log("SessionStore#clear");
         this.clearAll();
         callback && defer(callback);
     }
 
     length(callback){
-        console.log("SessionStore#length");
         this.all(function (err, sessions) {
             if (err) return callback(err);
             callback(null, Object.keys(sessions).length);
@@ -98,7 +98,6 @@ module.exports = class SessionStore extends Store {
     }
 
     async getSession(sessionId) {
-        console.log("SessionStore#getSession", sessionId);
         let session = await frappe.getDoc('Session', sessionId);
         var sess = session.session;
         if (!sess) {
@@ -112,6 +111,7 @@ module.exports = class SessionStore extends Store {
           ? new Date(sess.cookie.expires)
           : sess.cookie.expires;
 
+        console.log("Expires", expires);
         // destroy expired session
         if (expires && expires <= Date.now()) {
           this.deleteSession(sessionId);
