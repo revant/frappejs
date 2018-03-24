@@ -94,8 +94,8 @@ module.exports = {
 
         app.post('/login', function (req, res, next) {
             // Do a database look-up TODO : Store passwords securely
-            let userFuture = frappe.getDoc("User", req.body.username);
-            userFuture.then(function(user){
+            let userFuture = frappe.db.get('User', req.body.username);
+            userFuture.then((user) => {
                 if (req.body.username &&
                     req.body.username === user.name &&
                     req.body.password &&
@@ -105,7 +105,7 @@ module.exports = {
                 } else {
                     throw new PermissionDenied();
                 }
-            }).catch(function(){
+            }).catch((error) => {
                 res.redirect('/login');
             });
         });

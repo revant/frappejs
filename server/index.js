@@ -16,6 +16,7 @@ const cookieParser = require('cookie-parser');
 const nunjucks = require('nunjucks');
 const session = require('express-session');
 const path = require('path');
+const SessionStore = require('./SessionStore');
 
 require.extensions['.html'] = function (module, filename) {
     module.exports = fs.readFileSync(filename, 'utf8');
@@ -99,7 +100,7 @@ module.exports = {
 
     setupSession(app){
         let sess = {
-            // store: {}, // set store
+            store: new SessionStore(),
             secret: 'cats',
             resave: false,
             saveUninitialized: true,
