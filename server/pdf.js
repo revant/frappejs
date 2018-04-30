@@ -2,7 +2,7 @@ const frappe = require('frappejs');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
-const { shell } = require('electron');
+// const { shell } = require('electron');
 const { getTmpDir } = require('frappejs/server/utils');
 const { getHTML } = require('frappejs/common/print');
 const { getRandomString } = require('frappejs/utils');
@@ -22,7 +22,7 @@ async function getPDFForElectron(doctype, name) {
     const html = await getHTML(doctype, name);
     const filepath = path.join(frappe.electronSettings.directory, name + '.pdf');
     await makePDF(html, filepath);
-    shell.openItem(filepath);
+    // shell.openItem(filepath);
 }
 
 function setupExpressRoute() {

@@ -12,7 +12,7 @@ class TreeNode extends BaseComponent {
     }
 
     get templateHTML() {
-        return require('./treeNode.html');
+        // return require('./treeNode.html');
     }
 
     constructor() {

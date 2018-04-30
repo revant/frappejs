@@ -34,7 +34,7 @@ module.exports = {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(express.static(staticPath));
-
+        
         // socketio
         io.on('connection', function (socket) {
             frappe.db.bindSocketServer(socket);

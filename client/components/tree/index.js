@@ -3,7 +3,7 @@ const TreeNode = require('./treeNode');
 
 class Tree extends BaseComponent {
     get templateHTML() {
-        return require('./index.html');
+        // return require('./index.html');
     }
 
     constructor() {
